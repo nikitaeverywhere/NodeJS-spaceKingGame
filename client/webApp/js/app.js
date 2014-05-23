@@ -6,7 +6,7 @@ var app = new function() {
 
     };
 
-    this.init = function() {
+    this.login = function() {
 
         server.connect(document.getElementById("host").value, function() {
             server.send({
@@ -14,6 +14,12 @@ var app = new function() {
             });
             game.start();
         }, game.serverMessage);
+
+    };
+
+    this.init = function() {
+
+        document.getElementById("host").value = window.location.host + ":8080";
 
     };
 

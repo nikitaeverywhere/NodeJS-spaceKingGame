@@ -11,11 +11,11 @@
     <script type="text/javascript" src="js/view.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Play&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 </head>
-<body>
+<body onload="app.init()">
     <div class="gameLogo">Space King <sub>v0.2</sub></div>
     <div class="central">
         <div>
-            <form onsubmit="app.init(); return false;">
+            <form onsubmit="app.login(); return false;">
                 <h1>Welcome!</h1>
                 <div>Host</div>
                 <label>

@@ -88,17 +88,14 @@ var game = new function() {
             highScore = 0,
             direction = 0,
             nickname = "Anonymous",
-            accelerating = false,
-            _this = this;
+            accelerating = false;
 
         this.PLAYER_ID = PLAYER_ID;
 
         /**
          * Updates the ship with delta time.
-         *
-         * @param {number=} delta
          */
-        this.updateView = function(delta) {
+        this.updateView = function() {
 
             view.setWorldElement(element, {
                 x: x,
@@ -217,6 +214,8 @@ var game = new function() {
 
     var bindEvents = function() {
 
+        var initialDirection = 0;
+
         document.body.onkeypress = function(e) {
             switch (e.charCode || e.keyCode) {
                 case 119: server.send({ // W
@@ -249,6 +248,80 @@ var game = new function() {
                     arguments: []
                 }); break;
             }
+        };
+
+        document.body.ontouchstart = function(e) {
+
+            e.preventDefault();
+
+            var cx = window.innerWidth/2,
+                cy = window.innerHeight/2,
+                px = e.touches[0].pageX,
+                py = e.touches[0].pageY,
+                cdir = MY_SHIP.getDir(),
+                dir = Math.PI/2 - Math.atan2(px - cx, py - cy),
+                diff = Math.atan2(Math.sin(dir - cdir), Math.cos(dir - cdir)),
+                dd = (diff > 0)?1:-1;
+
+            initialDirection = dd;
+
+            server.send({
+                action: "startAccelerate",
+                arguments: []
+            });
+
+            server.send({
+                action: "startRotate",
+                arguments: [dd]
+            });
+
+        };
+
+        document.body.ontouchmove = function(e) {
+
+            e.preventDefault();
+
+            var cx = window.innerWidth/2,
+                cy = window.innerHeight/2,
+                px = e.changedTouches[0].pageX,
+                py = e.changedTouches[0].pageY,
+                cdir = MY_SHIP.getDir(),
+                dir = Math.PI/2 - Math.atan2(px - cx, py - cy),
+                diff = Math.atan2(Math.sin(dir - cdir), Math.cos(dir - cdir)),
+                dd = (diff > 0)?1:-1;
+
+            if (Math.abs(diff) > 0.05) {
+                if (initialDirection !== dd) {
+                    initialDirection = dd;
+                    server.send({
+                        action: "startRotate",
+                        arguments: [dd]
+                    });
+                }
+            } else {
+                server.send({
+                    action: "stopRotate",
+                    arguments: []
+                });
+                initialDirection = 0;
+            }
+
+        };
+
+        document.body.ontouchend = function(e) {
+
+            e.preventDefault();
+
+            server.send({
+                action: "stopRotate",
+                arguments: []
+            });
+
+            server.send({
+                action: "stopAccelerate",
+                arguments: []
+            });
+
         };
 
     };

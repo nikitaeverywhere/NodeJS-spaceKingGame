@@ -16,4 +16,4 @@ Then visit localhost to play.
 
 ## Demo
 
-<img src="http://giant.gfycat.com/RingedLoneAlbino.gif"/>
+<img src="media/space-king-demo.gif"/>
